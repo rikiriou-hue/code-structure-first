@@ -25,6 +25,7 @@ const Navbar = () => {
     { to: "/notes", label: "Notes" },
     { to: "/future-letters", label: "Letters" },
     { to: "/memory-map", label: "Map" },
+    { to: "/couple-games", label: "Games" },
     { to: "/profile", label: "Profil" },
   ];
 

@@ -97,6 +97,63 @@ const App = () => (
             }
           />
 
+          <Route
+            path="/couple-games"
+            element={
+              <ProtectedRoute>
+                <CoupleGames />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/truth-or-love"
+            element={
+              <ProtectedRoute>
+                <TruthOrLove />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/love-quiz"
+            element={
+              <ProtectedRoute>
+                <LoveQuiz />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/whos-more-likely"
+            element={
+              <ProtectedRoute>
+                <WhosMoreLikely />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/this-or-that"
+            element={
+              <ProtectedRoute>
+                <ThisOrThat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/memory-match"
+            element={
+              <ProtectedRoute>
+                <MemoryMatch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/date-planner"
+            element={
+              <ProtectedRoute>
+                <DatePlanner />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
