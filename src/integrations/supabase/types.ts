@@ -76,6 +76,85 @@ export type Database = {
         }
         Relationships: []
       }
+      game_answers: {
+        Row: {
+          answer: Json
+          created_at: string
+          id: string
+          round: number
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          answer: Json
+          created_at?: string
+          id?: string
+          round?: number
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          round?: number
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "game_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_sessions: {
+        Row: {
+          couple_id: string
+          created_at: string
+          created_by: string
+          current_question: Json | null
+          current_round: number
+          game_type: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          couple_id: string
+          created_at?: string
+          created_by: string
+          current_question?: Json | null
+          current_round?: number
+          game_type: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          couple_id?: string
+          created_at?: string
+          created_by?: string
+          current_question?: Json | null
+          current_round?: number
+          game_type?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_sessions_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memories: {
         Row: {
           content: string | null
