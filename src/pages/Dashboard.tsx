@@ -82,6 +82,15 @@ const Dashboard = () => {
       desc: "Places we’ve been",
       sticker: "📍",
       rotate: "1.5deg",
+      size: "",
+    },
+    {
+      to: "/couple-games",
+      icon: <Gamepad2 className="w-6 h-6" />,
+      title: "Couple Games",
+      desc: "Main bareng yuk!",
+      sticker: "🎮",
+      rotate: "-1deg",
       size: "md:col-span-2",
     },
   ];
