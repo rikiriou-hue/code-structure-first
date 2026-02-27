@@ -76,6 +76,41 @@ export type Database = {
         }
         Relationships: []
       }
+      date_planner_results: {
+        Row: {
+          activity: string
+          couple_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          place: string
+        }
+        Insert: {
+          activity: string
+          couple_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          place: string
+        }
+        Update: {
+          activity?: string
+          couple_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          place?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "date_planner_results_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       future_letters: {
         Row: {
           content: string
@@ -107,6 +142,82 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "future_letters_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_answers: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "game_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_sessions: {
+        Row: {
+          couple_id: string
+          created_at: string
+          created_by: string | null
+          game_type: string
+          id: string
+          option_a: string | null
+          option_b: string | null
+          question: string | null
+          status: string
+        }
+        Insert: {
+          couple_id: string
+          created_at?: string
+          created_by?: string | null
+          game_type: string
+          id?: string
+          option_a?: string | null
+          option_b?: string | null
+          question?: string | null
+          status?: string
+        }
+        Update: {
+          couple_id?: string
+          created_at?: string
+          created_by?: string | null
+          game_type?: string
+          id?: string
+          option_a?: string | null
+          option_b?: string | null
+          question?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_sessions_couple_id_fkey"
             columns: ["couple_id"]
             isOneToOne: false
             referencedRelation: "couples"
