@@ -30,7 +30,7 @@ const WhosMoreLikely = () => {
         filter: `session_id=eq.${sessionId}`,
       }, (payload) => {
         const row = payload.new as any;
-        if (row.user_id !== userId) setPartnerChoice(row.answer);
+        if (row.user_id !== userId) setPartnerChoice(row.answer as string);
       })
       .subscribe();
 
@@ -40,7 +40,7 @@ const WhosMoreLikely = () => {
       .eq("session_id", sessionId)
       .neq("user_id", userId!)
       .maybeSingle()
-      .then(({ data }) => { if (data) setPartnerChoice(data.answer); });
+      .then(({ data }) => { if (data) setPartnerChoice(data.answer as string); });
 
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);

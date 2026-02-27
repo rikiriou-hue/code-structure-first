@@ -114,7 +114,7 @@ const MemoryMapForm = ({ clickedPos, onSuccess, onCancel }: Props) => {
         longitude: clickedPos.lng,
         memory_date: date,
         photo_url: photoUrl,
-      } as any);
+      });
 
       if (error) throw error;
       toast.success("Lokasi ditandai! 📍");

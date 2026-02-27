@@ -34,12 +34,12 @@ const InvitePartnerDialog = ({ coupleId, onJoined }: InvitePartnerDialogProps) =
 
       // Insert invite
       const { error: insertError } = await supabase
-        .from("couple_invites" as any)
+        .from("couple_invites")
         .insert({
           couple_id: coupleId,
           invited_by: user.id,
           code,
-        } as any);
+        });
 
       if (insertError) throw insertError;
 

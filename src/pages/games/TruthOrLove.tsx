@@ -34,7 +34,7 @@ const TruthOrLove = () => {
       }, (payload) => {
         const row = payload.new as any;
         if (row.user_id !== userId) {
-          setPartnerAnswer(row.answer);
+          setPartnerAnswer(row.answer as string);
         }
       })
       .subscribe();
@@ -47,7 +47,7 @@ const TruthOrLove = () => {
       .neq("user_id", userId!)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setPartnerAnswer(data.answer);
+        if (data) setPartnerAnswer(data.answer as string);
       });
 
     return () => { supabase.removeChannel(channel); };

@@ -34,7 +34,7 @@ const LoveQuiz = () => {
         filter: `session_id=eq.${sessionId}`,
       }, (payload) => {
         const row = payload.new as any;
-        if (row.user_id !== userId) setPartnerAnswer(row.answer);
+        if (row.user_id !== userId) setPartnerAnswer(row.answer as string);
       })
       .subscribe();
 
@@ -44,7 +44,7 @@ const LoveQuiz = () => {
       .eq("session_id", sessionId)
       .neq("user_id", userId!)
       .maybeSingle()
-      .then(({ data }) => { if (data) setPartnerAnswer(data.answer); });
+      .then(({ data }) => { if (data) setPartnerAnswer(data.answer as string); });
 
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);

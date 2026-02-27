@@ -81,7 +81,7 @@ export type Database = {
           activity: string
           couple_id: string
           created_at: string
-          created_by: string | null
+          created_by: string
           id: string
           place: string
         }
@@ -89,7 +89,7 @@ export type Database = {
           activity: string
           couple_id: string
           created_at?: string
-          created_by?: string | null
+          created_by: string
           id?: string
           place: string
         }
@@ -97,7 +97,7 @@ export type Database = {
           activity?: string
           couple_id?: string
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           id?: string
           place?: string
         }
@@ -151,23 +151,26 @@ export type Database = {
       }
       game_answers: {
         Row: {
-          answer: string
+          answer: Json
           created_at: string
           id: string
+          round: number
           session_id: string
           user_id: string
         }
         Insert: {
-          answer: string
+          answer: Json
           created_at?: string
           id?: string
+          round?: number
           session_id: string
           user_id: string
         }
         Update: {
-          answer?: string
+          answer?: Json
           created_at?: string
           id?: string
+          round?: number
           session_id?: string
           user_id?: string
         }
@@ -185,35 +188,41 @@ export type Database = {
         Row: {
           couple_id: string
           created_at: string
-          created_by: string | null
+          created_by: string
+          current_round: number
           game_type: string
           id: string
           option_a: string | null
           option_b: string | null
           question: string | null
           status: string
+          updated_at: string
         }
         Insert: {
           couple_id: string
           created_at?: string
-          created_by?: string | null
+          created_by: string
+          current_round?: number
           game_type: string
           id?: string
           option_a?: string | null
           option_b?: string | null
           question?: string | null
           status?: string
+          updated_at?: string
         }
         Update: {
           couple_id?: string
           created_at?: string
-          created_by?: string | null
+          created_by?: string
+          current_round?: number
           game_type?: string
           id?: string
           option_a?: string | null
           option_b?: string | null
           question?: string | null
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -307,7 +316,7 @@ export type Database = {
           id: string
           latitude: number
           longitude: number
-          memory_date: string | null
+          memory_date: string
           photo_url: string | null
           title: string
           user_id: string
@@ -320,7 +329,7 @@ export type Database = {
           id?: string
           latitude: number
           longitude: number
-          memory_date?: string | null
+          memory_date?: string
           photo_url?: string | null
           title: string
           user_id: string
@@ -333,7 +342,7 @@ export type Database = {
           id?: string
           latitude?: number
           longitude?: number
-          memory_date?: string | null
+          memory_date?: string
           photo_url?: string | null
           title?: string
           user_id?: string
@@ -350,47 +359,33 @@ export type Database = {
       }
       notifications: {
         Row: {
-          couple_id: string
           created_at: string
           id: string
           is_read: boolean
           message: string | null
-          target_user_id: string
           title: string
           type: string
           user_id: string
         }
         Insert: {
-          couple_id: string
           created_at?: string
           id?: string
           is_read?: boolean
           message?: string | null
-          target_user_id: string
           title: string
           type: string
           user_id: string
         }
         Update: {
-          couple_id?: string
           created_at?: string
           id?: string
           is_read?: boolean
           message?: string | null
-          target_user_id?: string
           title?: string
           type?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_couple_id_fkey"
-            columns: ["couple_id"]
-            isOneToOne: false
-            referencedRelation: "couples"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
