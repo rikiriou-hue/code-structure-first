@@ -76,6 +76,79 @@ export type Database = {
         }
         Relationships: []
       }
+      date_planner_results: {
+        Row: {
+          activity: string
+          couple_id: string
+          created_at: string
+          created_by: string
+          id: string
+          place: string
+        }
+        Insert: {
+          activity: string
+          couple_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          place: string
+        }
+        Update: {
+          activity?: string
+          couple_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          place?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "date_planner_results_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      future_letters: {
+        Row: {
+          content: string
+          couple_id: string
+          created_at: string
+          id: string
+          title: string
+          unlock_date: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          couple_id: string
+          created_at?: string
+          id?: string
+          title: string
+          unlock_date: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          couple_id?: string
+          created_at?: string
+          id?: string
+          title?: string
+          unlock_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "future_letters_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_answers: {
         Row: {
           answer: Json
@@ -116,10 +189,12 @@ export type Database = {
           couple_id: string
           created_at: string
           created_by: string
-          current_question: Json | null
           current_round: number
           game_type: string
           id: string
+          option_a: string | null
+          option_b: string | null
+          question: string | null
           status: string
           updated_at: string
         }
@@ -127,10 +202,12 @@ export type Database = {
           couple_id: string
           created_at?: string
           created_by: string
-          current_question?: Json | null
           current_round?: number
           game_type: string
           id?: string
+          option_a?: string | null
+          option_b?: string | null
+          question?: string | null
           status?: string
           updated_at?: string
         }
@@ -138,16 +215,50 @@ export type Database = {
           couple_id?: string
           created_at?: string
           created_by?: string
-          current_question?: Json | null
           current_round?: number
           game_type?: string
           id?: string
+          option_a?: string | null
+          option_b?: string | null
+          question?: string | null
           status?: string
           updated_at?: string
         }
         Relationships: [
           {
             foreignKeyName: "game_sessions_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      love_notes: {
+        Row: {
+          content: string
+          couple_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          couple_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          couple_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "love_notes_couple_id_fkey"
             columns: ["couple_id"]
             isOneToOne: false
             referencedRelation: "couples"
@@ -195,6 +306,86 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      memory_locations: {
+        Row: {
+          category: string
+          couple_id: string
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number
+          longitude: number
+          memory_date: string
+          photo_url: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          couple_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          memory_date?: string
+          photo_url?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          couple_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          memory_date?: string
+          photo_url?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_locations_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
