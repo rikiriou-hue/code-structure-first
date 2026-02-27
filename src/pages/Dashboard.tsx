@@ -168,8 +168,35 @@ const Dashboard = () => {
               </motion.div>
             ))}
 
+            {/* Invite Partner Card - always visible when couple exists but no partner */}
             {!hasPartner && coupleId && (
-              <InvitePartnerDialog coupleId={coupleId} onJoined={fetchData} />
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: cards.length * 0.2 }}
+              >
+                <InvitePartnerDialog coupleId={coupleId} onJoined={fetchData} />
+              </motion.div>
+            )}
+
+            {/* Invite Partner Card - show when no couple yet */}
+            {!coupleId && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: cards.length * 0.2 }}
+                className="relative block h-full p-8 bg-card rounded-md shadow-2xl"
+                style={{ transform: "rotate(1.5deg)" }}
+              >
+                <div className="absolute inset-2 bg-secondary -z-10 rounded-md rotate-2"></div>
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-20 h-6 rounded-sm rotate-[-2deg]" style={{ background: 'hsl(var(--tape) / 0.6)' }}></div>
+                <div className="absolute -top-5 -right-4 text-3xl rotate-6">💑</div>
+                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
+                  <UserPlus className="w-6 h-6" />
+                </div>
+                <h2 className="font-handwritten text-3xl mb-2">Invite Partner</h2>
+                <p className="font-handwritten opacity-70">Buat couple dulu ya!</p>
+              </motion.div>
             )}
 
           </div>
