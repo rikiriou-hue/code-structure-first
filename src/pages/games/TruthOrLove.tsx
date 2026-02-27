@@ -34,7 +34,7 @@ const TruthOrLove = () => {
       }, (payload) => {
         const row = payload.new as any;
         if (row.user_id !== userId) {
-          setPartnerAnswer(row.answer);
+          setPartnerAnswer(row.answer as string);
         }
       })
       .subscribe();

@@ -44,7 +44,7 @@ const LoveQuiz = () => {
       .eq("session_id", sessionId)
       .neq("user_id", userId!)
       .maybeSingle()
-      .then(({ data }) => { if (data) setPartnerAnswer(data.answer); });
+      .then(({ data }) => { if (data) setPartnerAnswer(data.answer as string); });
 
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);

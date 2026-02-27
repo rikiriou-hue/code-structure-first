@@ -40,7 +40,7 @@ const ThisOrThat = () => {
       .eq("session_id", sessionId)
       .neq("user_id", userId!)
       .maybeSingle()
-      .then(({ data }) => { if (data) setPartnerChoice(data.answer); });
+      .then(({ data }) => { if (data) setPartnerChoice(data.answer as string); });
 
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);
