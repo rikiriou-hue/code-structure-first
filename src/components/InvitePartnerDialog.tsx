@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { UserPlus, Copy, Check } from "lucide-react";
 
 interface InvitePartnerDialogProps {
-  coupleId: string;
+  coupleId: string | null;
   onJoined?: () => void;
 }
 
@@ -22,29 +22,39 @@ const InvitePartnerDialog = ({ coupleId, onJoined }: InvitePartnerDialogProps) =
   const generateCode = async () => {
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      let activeCoupleId = coupleId;
+
+      // If no couple yet, create one first
+      if (!activeCoupleId) {
+        const { data: newCouple, error: coupleErr } = await supabase
+          .from("couples")
+          .insert({ start_date: new Date().toISOString().split("T")[0] })
+          .select("id")
+          .single();
+
+        if (coupleErr || !newCouple) throw new Error("Gagal membuat couple");
+
+        // Link profile to couple
+        await supabase
+          .from("profiles")
+          .update({ couple_id: newCouple.id })
+          .eq("user_id", user.id);
+
+        activeCoupleId = newCouple.id;
+      }
+
       // Generate code via DB function
       const { data: codeData, error: codeError } = await supabase.rpc("generate_invite_code");
       if (codeError) throw codeError;
 
       const code = codeData as string;
 
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
-
-      // Insert invite
-      const { error: insertError } = await supabase
-        .from("couple_invites")
-        .insert({
-          couple_id: coupleId,
-          invited_by: user.id,
-          code,
-        });
-
-      if (insertError) throw insertError;
-
       setInviteCode(code);
       toast.success("Kode undangan berhasil dibuat!");
+      onJoined?.(); // refresh dashboard data
     } catch (err: any) {
       toast.error(err.message || "Gagal membuat kode undangan");
     } finally {
