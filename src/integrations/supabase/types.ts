@@ -435,7 +435,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invite: { Args: { invite_code: string }; Returns: Json }
+      generate_invite_code: { Args: never; Returns: string }
+      get_couple_members: { Args: never; Returns: Json }
       get_user_couple_id: { Args: { _user_id: string }; Returns: string }
+      kick_partner: { Args: { target_user: string }; Returns: Json }
+      leave_couple: { Args: never; Returns: Json }
     }
     Enums: {
       [_ in never]: never
