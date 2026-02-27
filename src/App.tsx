@@ -14,6 +14,13 @@ import Notes from "./pages/Notes";
 import FutureLetters from "./pages/FutureLetters";
 import Profile from "./pages/Profile";
 import MemoryMap from "./pages/MemoryMap";
+import CoupleGames from "./pages/CoupleGames";
+import TruthOrLove from "./pages/games/TruthOrLove";
+import LoveQuiz from "./pages/games/LoveQuiz";
+import WhosMoreLikely from "./pages/games/WhosMoreLikely";
+import ThisOrThat from "./pages/games/ThisOrThat";
+import MemoryMatch from "./pages/games/MemoryMatch";
+import DatePlanner from "./pages/games/DatePlanner";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
