@@ -47,7 +47,7 @@ const TruthOrLove = () => {
       .neq("user_id", userId!)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setPartnerAnswer(data.answer);
+        if (data) setPartnerAnswer(data.answer as string);
       });
 
     return () => { supabase.removeChannel(channel); };

@@ -34,7 +34,7 @@ const LoveQuiz = () => {
         filter: `session_id=eq.${sessionId}`,
       }, (payload) => {
         const row = payload.new as any;
-        if (row.user_id !== userId) setPartnerAnswer(row.answer);
+        if (row.user_id !== userId) setPartnerAnswer(row.answer as string);
       })
       .subscribe();
 
