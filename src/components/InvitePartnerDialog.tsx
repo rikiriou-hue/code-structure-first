@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { UserPlus, Copy, Check } from "lucide-react";
 
 interface InvitePartnerDialogProps {
-  coupleId: string;
+  coupleId: string | null;
   onJoined?: () => void;
 }
 
