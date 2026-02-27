@@ -30,7 +30,7 @@ const WhosMoreLikely = () => {
         filter: `session_id=eq.${sessionId}`,
       }, (payload) => {
         const row = payload.new as any;
-        if (row.user_id !== userId) setPartnerChoice(row.answer);
+        if (row.user_id !== userId) setPartnerChoice(row.answer as string);
       })
       .subscribe();
 
