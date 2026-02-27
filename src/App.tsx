@@ -14,6 +14,13 @@ import Notes from "./pages/Notes";
 import FutureLetters from "./pages/FutureLetters";
 import Profile from "./pages/Profile";
 import MemoryMap from "./pages/MemoryMap";
+import CoupleGames from "./pages/CoupleGames";
+import TruthOrLove from "./pages/games/TruthOrLove";
+import LoveQuiz from "./pages/games/LoveQuiz";
+import WhosMoreLikely from "./pages/games/WhosMoreLikely";
+import ThisOrThat from "./pages/games/ThisOrThat";
+import MemoryMatch from "./pages/games/MemoryMatch";
+import DatePlanner from "./pages/games/DatePlanner";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -86,6 +93,63 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MemoryMap />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/couple-games"
+            element={
+              <ProtectedRoute>
+                <CoupleGames />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/truth-or-love"
+            element={
+              <ProtectedRoute>
+                <TruthOrLove />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/love-quiz"
+            element={
+              <ProtectedRoute>
+                <LoveQuiz />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/whos-more-likely"
+            element={
+              <ProtectedRoute>
+                <WhosMoreLikely />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/this-or-that"
+            element={
+              <ProtectedRoute>
+                <ThisOrThat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/memory-match"
+            element={
+              <ProtectedRoute>
+                <MemoryMatch />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/couple-games/date-planner"
+            element={
+              <ProtectedRoute>
+                <DatePlanner />
               </ProtectedRoute>
             }
           />
