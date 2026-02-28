@@ -76,41 +76,6 @@ export type Database = {
         }
         Relationships: []
       }
-      date_planner_results: {
-        Row: {
-          activity: string
-          couple_id: string
-          created_at: string
-          created_by: string
-          id: string
-          place: string
-        }
-        Insert: {
-          activity: string
-          couple_id: string
-          created_at?: string
-          created_by: string
-          id?: string
-          place: string
-        }
-        Update: {
-          activity?: string
-          couple_id?: string
-          created_at?: string
-          created_by?: string
-          id?: string
-          place?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "date_planner_results_couple_id_fkey"
-            columns: ["couple_id"]
-            isOneToOne: false
-            referencedRelation: "couples"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       future_letters: {
         Row: {
           content: string
@@ -151,26 +116,23 @@ export type Database = {
       }
       game_answers: {
         Row: {
-          answer: Json
+          answer: string
           created_at: string
           id: string
-          round: number
           session_id: string
           user_id: string
         }
         Insert: {
-          answer: Json
+          answer: string
           created_at?: string
           id?: string
-          round?: number
           session_id: string
           user_id: string
         }
         Update: {
-          answer?: Json
+          answer?: string
           created_at?: string
           id?: string
-          round?: number
           session_id?: string
           user_id?: string
         }
@@ -188,41 +150,35 @@ export type Database = {
         Row: {
           couple_id: string
           created_at: string
-          created_by: string
-          current_round: number
+          created_by: string | null
           game_type: string
           id: string
           option_a: string | null
           option_b: string | null
           question: string | null
           status: string
-          updated_at: string
         }
         Insert: {
           couple_id: string
           created_at?: string
-          created_by: string
-          current_round?: number
+          created_by?: string | null
           game_type: string
           id?: string
           option_a?: string | null
           option_b?: string | null
           question?: string | null
           status?: string
-          updated_at?: string
         }
         Update: {
           couple_id?: string
           created_at?: string
-          created_by?: string
-          current_round?: number
+          created_by?: string | null
           game_type?: string
           id?: string
           option_a?: string | null
           option_b?: string | null
           question?: string | null
           status?: string
-          updated_at?: string
         }
         Relationships: [
           {
@@ -316,8 +272,7 @@ export type Database = {
           id: string
           latitude: number
           longitude: number
-          memory_date: string
-          photo_url: string | null
+          memory_date: string | null
           title: string
           user_id: string
         }
@@ -329,8 +284,7 @@ export type Database = {
           id?: string
           latitude: number
           longitude: number
-          memory_date?: string
-          photo_url?: string | null
+          memory_date?: string | null
           title: string
           user_id: string
         }
@@ -342,8 +296,7 @@ export type Database = {
           id?: string
           latitude?: number
           longitude?: number
-          memory_date?: string
-          photo_url?: string | null
+          memory_date?: string | null
           title?: string
           user_id?: string
         }
@@ -359,33 +312,47 @@ export type Database = {
       }
       notifications: {
         Row: {
+          couple_id: string
           created_at: string
           id: string
           is_read: boolean
           message: string | null
+          target_user_id: string
           title: string
           type: string
           user_id: string
         }
         Insert: {
+          couple_id: string
           created_at?: string
           id?: string
           is_read?: boolean
           message?: string | null
+          target_user_id: string
           title: string
           type: string
           user_id: string
         }
         Update: {
+          couple_id?: string
           created_at?: string
           id?: string
           is_read?: boolean
           message?: string | null
+          target_user_id?: string
           title?: string
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notifications_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -394,7 +361,6 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
-          theme: string
           user_id: string
         }
         Insert: {
@@ -403,7 +369,6 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
-          theme?: string
           user_id: string
         }
         Update: {
@@ -412,7 +377,6 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
-          theme?: string
           user_id?: string
         }
         Relationships: [
@@ -432,7 +396,6 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { invite_code: string }; Returns: Json }
       generate_invite_code: { Args: never; Returns: string }
-      get_couple_members: { Args: never; Returns: Json }
       get_user_couple_id: { Args: { _user_id: string }; Returns: string }
       kick_partner: { Args: { target_user: string }; Returns: Json }
       leave_couple: { Args: never; Returns: Json }
