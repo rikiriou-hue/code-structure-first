@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Users, Crown, LogOut, UserMinus } from "lucide-react";
+import { Users, Crown, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Member {
@@ -28,7 +28,6 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
     if (!user) return;
     setCurrentUserId(user.id);
 
-    // Get current user's couple_id
     const { data: profile } = await supabase
       .from("profiles")
       .select("couple_id")
@@ -37,7 +36,16 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
 
     if (!profile?.couple_id) return;
 
-    // Get the host (first invite creator or earliest profile)
+    // Now we can query all profiles in the same couple (RLS allows it)
+    const { data: coupleProfiles } = await supabase
+      .from("profiles")
+      .select("user_id, display_name, avatar_url, created_at")
+      .eq("couple_id", profile.couple_id)
+      .order("created_at", { ascending: true });
+
+    if (!coupleProfiles) return;
+
+    // Determine host: the invite creator, or the earliest member
     const { data: invite } = await supabase
       .from("couple_invites")
       .select("invited_by")
@@ -47,34 +55,14 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
       .limit(1)
       .single();
 
-    const hostUserId = invite?.invited_by;
+    const hostUserId = invite?.invited_by || coupleProfiles[0]?.user_id;
 
-    // We can't query other users' profiles with current RLS (users can only view own profile)
-    // So we show the current user's info and indicate partner count
-    const currentMember: Member = {
-      user_id: user.id,
-      display_name: user.user_metadata?.display_name || null,
-      avatar_url: null,
-      is_host: hostUserId ? user.id === hostUserId : true,
-    };
-
-    // Check partner count via HEAD request
-    const { count } = await supabase
-      .from("profiles")
-      .select("id", { count: "exact", head: true })
-      .eq("couple_id", profile.couple_id);
-
-    const membersList: Member[] = [currentMember];
-
-    // If there's a partner, add a placeholder
-    if (count && count >= 2) {
-      membersList.push({
-        user_id: "partner",
-        display_name: "Pasanganmu",
-        avatar_url: null,
-        is_host: hostUserId ? "partner" === hostUserId : false,
-      });
-    }
+    const membersList: Member[] = coupleProfiles.map((p) => ({
+      user_id: p.user_id,
+      display_name: p.display_name,
+      avatar_url: p.avatar_url,
+      is_host: p.user_id === hostUserId,
+    }));
 
     setMembers(membersList);
   };
@@ -102,29 +90,6 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
       }
     } catch (err: any) {
       toast.error(err.message || "Gagal keluar");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleKick = async (targetUserId: string, name: string) => {
-    if (!confirm(`Yakin ingin mengeluarkan ${name || "partner"}?`)) return;
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.rpc("kick_partner", {
-        target_user: targetUserId,
-      });
-      if (error) throw error;
-      const result = data as any;
-      if (result.success) {
-        toast.success("Partner berhasil dikeluarkan");
-        fetchMembers();
-        onChanged?.();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengeluarkan");
     } finally {
       setLoading(false);
     }
@@ -170,7 +135,6 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
                 </div>
               </div>
 
-              {/* Actions */}
               {members.length >= 2 && member.user_id === currentUserId && !isHost && (
                 <Button
                   variant="ghost"
