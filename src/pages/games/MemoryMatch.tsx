@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { RefreshCw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GameLayout from "@/components/games/GameLayout";
+import { useCouple } from "@/hooks/useCouple";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const defaultEmojis = ["💕", "🌸", "💌", "🦋", "🌹", "💗", "✨", "🧸"];
 
@@ -13,65 +16,247 @@ interface Card {
   matched: boolean;
 }
 
+function generateDeck(seed?: string): Card[] {
+  const pairs = defaultEmojis.slice(0, 6);
+  const all = [...pairs, ...pairs];
+
+  // Seeded shuffle for consistency between partners
+  if (seed) {
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) {
+      h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+    }
+    for (let i = all.length - 1; i > 0; i--) {
+      h = ((h << 5) - h + i) | 0;
+      const j = Math.abs(h) % (i + 1);
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+  } else {
+    all.sort(() => Math.random() - 0.5);
+  }
+
+  return all.map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }));
+}
+
 const MemoryMatch = () => {
+  const { coupleId, userId, loading: coupleLoading } = useCouple();
   const [cards, setCards] = useState<Card[]>([]);
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const channelRef = useRef<any>(null);
+  const isProcessing = useRef(false);
 
-  const initGame = () => {
-    const pairs = defaultEmojis.slice(0, 6);
-    const deck = [...pairs, ...pairs]
-      .sort(() => Math.random() - 0.5)
-      .map((emoji, i) => ({ id: i, emoji, flipped: false, matched: false }));
-    setCards(deck);
+  // Find or create a session with a shared seed
+  const initGame = useCallback(async () => {
+    if (!coupleId || !userId) return;
+
+    // Mark old sessions done
+    await supabase
+      .from("game_sessions")
+      .update({ status: "done" })
+      .eq("couple_id", coupleId)
+      .eq("game_type", "memory_match")
+      .eq("status", "active");
+
+    const seed = crypto.randomUUID();
+    const { data: session } = await supabase
+      .from("game_sessions")
+      .insert({
+        couple_id: coupleId,
+        game_type: "memory_match",
+        question: seed,
+        created_by: userId,
+      })
+      .select("id")
+      .single();
+
+    if (!session) { toast.error("Gagal membuat sesi"); return; }
+
+    setSessionId(session.id);
+    setCards(generateDeck(seed));
     setFlippedIds([]);
     setMoves(0);
     setIsComplete(false);
-  };
+  }, [coupleId, userId]);
 
+  // On mount, find existing session or create
   useEffect(() => {
-    initGame();
-  }, []);
+    if (coupleLoading || !coupleId || !userId) return;
 
-  useEffect(() => {
-    if (flippedIds.length === 2) {
-      const [a, b] = flippedIds;
-      setMoves((m) => m + 1);
+    const load = async () => {
+      const { data } = await supabase
+        .from("game_sessions")
+        .select("*")
+        .eq("couple_id", coupleId)
+        .eq("game_type", "memory_match")
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-      if (cards[a].emoji === cards[b].emoji) {
-        setTimeout(() => {
-          setCards((prev) => {
-            const next = prev.map((c) =>
-              c.id === a || c.id === b ? { ...c, matched: true } : c
-            );
-            if (next.every((c) => c.matched)) setIsComplete(true);
-            return next;
-          });
-          setFlippedIds([]);
-        }, 500);
+      if (data) {
+        setSessionId(data.id);
+        setCards(generateDeck(data.question!));
+        setFlippedIds([]);
+        setMoves(0);
+        setIsComplete(false);
       } else {
+        initGame();
+      }
+    };
+    load();
+  }, [coupleLoading, coupleId, userId, initGame]);
+
+  // Listen for new sessions from partner (restart)
+  useEffect(() => {
+    if (!coupleId || !userId) return;
+
+    const ch = supabase
+      .channel(`mm-session-${coupleId}`)
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "game_sessions",
+        filter: `couple_id=eq.${coupleId}`,
+      }, (payload) => {
+        const s = payload.new as any;
+        if (s.game_type === "memory_match" && s.status === "active" && s.created_by !== userId) {
+          setSessionId(s.id);
+          setCards(generateDeck(s.question));
+          setFlippedIds([]);
+          setMoves(0);
+          setIsComplete(false);
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(ch); };
+  }, [coupleId, userId]);
+
+  // Broadcast channel for card flips
+  useEffect(() => {
+    if (!sessionId || !userId) return;
+
+    const channel = supabase.channel(`mm-play-${sessionId}`, {
+      config: { broadcast: { self: false } },
+    });
+
+    channel
+      .on("broadcast", { event: "flip" }, ({ payload }) => {
+        if (payload.userId === userId) return;
+        handleFlip(payload.cardId, true);
+      })
+      .on("broadcast", { event: "match" }, ({ payload }) => {
+        setCards((prev) => {
+          const next = prev.map((c) =>
+            c.id === payload.a || c.id === payload.b ? { ...c, matched: true, flipped: true } : c
+          );
+          if (next.every((c) => c.matched)) setIsComplete(true);
+          return next;
+        });
+        setFlippedIds([]);
+      })
+      .on("broadcast", { event: "no-match" }, ({ payload }) => {
         setTimeout(() => {
           setCards((prev) =>
             prev.map((c) =>
-              c.id === a || c.id === b ? { ...c, flipped: false } : c
+              c.id === payload.a || c.id === payload.b ? { ...c, flipped: false } : c
             )
           );
           setFlippedIds([]);
-        }, 800);
+        }, 600);
+      })
+      .subscribe();
+
+    channelRef.current = channel;
+    return () => { supabase.removeChannel(channel); };
+  }, [sessionId, userId]);
+
+  const handleFlip = useCallback((id: number, isRemote = false) => {
+    if (isProcessing.current) return;
+
+    setCards((prev) => {
+      const card = prev[id];
+      if (!card || card.flipped || card.matched) return prev;
+      return prev.map((c) => (c.id === id ? { ...c, flipped: true } : c));
+    });
+
+    setFlippedIds((prev) => {
+      if (prev.length >= 2) return prev;
+      const card = cards[id];
+      if (!card || card.flipped || card.matched) return prev;
+
+      const next = [...prev, id];
+
+      if (!isRemote) {
+        channelRef.current?.send({
+          type: "broadcast",
+          event: "flip",
+          payload: { cardId: id, userId },
+        });
       }
-    }
-  }, [flippedIds]);
 
-  const handleFlip = (id: number) => {
-    if (flippedIds.length >= 2) return;
-    if (cards[id].flipped || cards[id].matched) return;
+      if (next.length === 2) {
+        isProcessing.current = true;
+        setMoves((m) => m + 1);
+        const [a, b] = next;
 
-    setCards((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, flipped: true } : c))
+        // Use the current cards state via closure
+        setTimeout(() => {
+          setCards((currentCards) => {
+            if (currentCards[a].emoji === currentCards[b].emoji) {
+              // Match!
+              if (!isRemote) {
+                channelRef.current?.send({
+                  type: "broadcast",
+                  event: "match",
+                  payload: { a, b },
+                });
+              }
+              const updated = currentCards.map((c) =>
+                c.id === a || c.id === b ? { ...c, matched: true } : c
+              );
+              if (updated.every((c) => c.matched)) setIsComplete(true);
+              setFlippedIds([]);
+              isProcessing.current = false;
+              return updated;
+            } else {
+              // No match
+              if (!isRemote) {
+                channelRef.current?.send({
+                  type: "broadcast",
+                  event: "no-match",
+                  payload: { a, b },
+                });
+              }
+              setTimeout(() => {
+                setCards((p) =>
+                  p.map((c) =>
+                    c.id === a || c.id === b ? { ...c, flipped: false } : c
+                  )
+                );
+                setFlippedIds([]);
+                isProcessing.current = false;
+              }, 600);
+              return currentCards;
+            }
+          });
+        }, 500);
+      }
+
+      return next;
+    });
+  }, [cards, userId]);
+
+  if (coupleLoading || cards.length === 0) {
+    return (
+      <GameLayout title="Memory Match" emoji="🃏">
+        <p className="text-center text-muted-foreground font-handwritten text-xl">Memuat...</p>
+      </GameLayout>
     );
-    setFlippedIds((prev) => [...prev, id]);
-  };
+  }
 
   return (
     <GameLayout title="Memory Match" emoji="🃏">
@@ -92,7 +277,7 @@ const MemoryMatch = () => {
           </div>
           <h2 className="font-handwritten text-4xl text-foreground">Selesai! 🎉</h2>
           <p className="font-handwritten text-xl text-muted-foreground">
-            Kamu menyelesaikannya dalam {moves} langkah
+            Kalian menyelesaikannya dalam {moves} langkah
           </p>
           <Button onClick={initGame} className="gap-2">
             <RefreshCw className="w-4 h-4" /> Main Lagi

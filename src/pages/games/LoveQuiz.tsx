@@ -1,85 +1,49 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import GameLayout from "@/components/games/GameLayout";
 import { loveQuizQuestions } from "@/lib/gameQuestions";
-import { useCouple } from "@/hooks/useCouple";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useGameSession } from "@/hooks/useGameSession";
 
 const LoveQuiz = () => {
-  const { coupleId, userId, myName, partnerName } = useCouple();
-  const [questionIndex, setQuestionIndex] = useState(() =>
-    Math.floor(Math.random() * loveQuizQuestions.length)
-  );
-  const [guess, setGuess] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const {
+    coupleId, userId, myName, partnerName,
+    sessionId, question, myAnswer, partnerAnswer,
+    loading, createSession, submitAnswer,
+  } = useGameSession("love_quiz");
+
+  const [draft, setDraft] = useState("");
   const [score, setScore] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [partnerAnswer, setPartnerAnswer] = useState<string | null>(null);
-
-  const question = loveQuizQuestions[questionIndex];
 
   useEffect(() => {
-    if (!sessionId) return;
-    const channel = supabase
-      .channel(`quiz-answers-${sessionId}`)
-      .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: "game_answers",
-        filter: `session_id=eq.${sessionId}`,
-      }, (payload) => {
-        const row = payload.new as any;
-        if (row.user_id !== userId) setPartnerAnswer(row.answer as string);
-      })
-      .subscribe();
-
-    supabase
-      .from("game_answers")
-      .select("answer, user_id")
-      .eq("session_id", sessionId)
-      .neq("user_id", userId!)
-      .maybeSingle()
-      .then(({ data }) => { if (data) setPartnerAnswer(data.answer as string); });
-
-    return () => { supabase.removeChannel(channel); };
-  }, [sessionId, userId]);
+    if (!loading && coupleId && !sessionId) {
+      const q = loveQuizQuestions[Math.floor(Math.random() * loveQuizQuestions.length)];
+      createSession(q);
+    }
+  }, [loading, coupleId, sessionId, createSession]);
 
   const nextQuestion = () => {
-    let next = Math.floor(Math.random() * loveQuizQuestions.length);
-    while (next === questionIndex && loveQuizQuestions.length > 1) {
-      next = Math.floor(Math.random() * loveQuizQuestions.length);
-    }
-    setQuestionIndex(next);
-    setGuess("");
-    setSubmitted(false);
-    setSessionId(null);
-    setPartnerAnswer(null);
+    const q = loveQuizQuestions[Math.floor(Math.random() * loveQuizQuestions.length)];
+    setDraft("");
+    createSession(q);
   };
 
   const handleSubmit = async () => {
-    if (!guess.trim() || !coupleId || !userId) return;
-
-    const { data: session } = await supabase
-      .from("game_sessions")
-      .insert({ couple_id: coupleId, game_type: "love_quiz", question, created_by: userId })
-      .select("id")
-      .single();
-
-    if (!session) { toast.error("Gagal menyimpan"); return; }
-
-    await supabase.from("game_answers").insert({
-      session_id: session.id, user_id: userId, answer: guess,
-    });
-
-    setSessionId(session.id);
-    setSubmitted(true);
-    setTotalAnswered((prev) => prev + 1);
+    if (!draft.trim()) return;
+    await submitAnswer(draft.trim());
+    setTotalAnswered((p) => p + 1);
   };
+
+  if (loading || !question) {
+    return (
+      <GameLayout title="Love Quiz" emoji="🧠">
+        <p className="text-center text-muted-foreground font-handwritten text-xl">Memuat...</p>
+      </GameLayout>
+    );
+  }
 
   return (
     <GameLayout title="Love Quiz" emoji="🧠">
@@ -91,7 +55,7 @@ const LoveQuiz = () => {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={questionIndex}
+          key={sessionId}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
@@ -103,16 +67,16 @@ const LoveQuiz = () => {
             </p>
           </div>
 
-          {!submitted ? (
+          {!myAnswer ? (
             <div className="space-y-4">
               <Input
                 placeholder="Tebak jawabannya..."
-                value={guess}
-                onChange={(e) => setGuess(e.target.value)}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
                 className="font-handwritten text-lg bg-card border-border"
                 onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               />
-              <Button onClick={handleSubmit} className="w-full" disabled={!guess.trim() || !coupleId}>
+              <Button onClick={handleSubmit} className="w-full" disabled={!draft.trim() || !coupleId}>
                 Kirim Tebakan
               </Button>
             </div>
@@ -124,7 +88,7 @@ const LoveQuiz = () => {
             >
               <div className="glass-card p-6">
                 <p className="text-sm text-muted-foreground mb-1">Tebakanmu:</p>
-                <p className="font-handwritten text-xl text-foreground">{guess}</p>
+                <p className="font-handwritten text-xl text-foreground">{myAnswer}</p>
               </div>
               <div className={`glass-card p-6 ${!partnerAnswer ? "border-dashed border-2 border-primary/20" : ""}`}>
                 <p className="text-sm text-muted-foreground mb-1">Jawaban asli {partnerName}:</p>
