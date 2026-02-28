@@ -165,13 +165,6 @@ const MemoryMap = () => {
                     >
                       <Popup maxWidth={280}>
                         <div className="text-center">
-                          {loc.photo_url && (
-                            <img
-                              src={loc.photo_url}
-                              alt={loc.title}
-                              className="w-full h-32 object-cover rounded-sm mb-2"
-                            />
-                          )}
                           <p className="font-bold text-sm">{getCategoryEmoji(loc.category)} {loc.title}</p>
                           <p className="text-xs text-muted-foreground">{getCategoryLabel(loc.category)}</p>
                           {loc.description && <p className="text-xs mt-1">{loc.description}</p>}
