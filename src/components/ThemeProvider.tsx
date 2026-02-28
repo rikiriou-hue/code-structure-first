@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export type ThemeName = "romantic-rose" | "nature-memory" | "ocean-dream" | "midnight-vintage";
 
@@ -24,39 +23,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<ThemeName>("romantic-rose");
 
   useEffect(() => {
-    applyTheme("romantic-rose");
-
-    const load = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const { data } = await supabase
-        .from("profiles")
-        .select("theme")
-        .eq("user_id", session.user.id)
-        .single();
-      if (data?.theme && isThemeName(data.theme)) {
-        applyTheme(data.theme);
-      }
-    };
-    load();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("theme")
-          .eq("user_id", session.user.id)
-          .single();
-        if (data?.theme && isThemeName(data.theme)) {
-          applyTheme(data.theme);
-          return;
-        }
-      }
-
+    const stored = localStorage.getItem("app-theme");
+    if (stored && isThemeName(stored)) {
+      applyTheme(stored);
+    } else {
       applyTheme("romantic-rose");
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, []);
 
   const applyTheme = (t: ThemeName) => {
@@ -67,6 +39,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       target.classList.add(`theme-${t}`);
     });
 
+    localStorage.setItem("app-theme", t);
     setThemeState(t);
   };
 
