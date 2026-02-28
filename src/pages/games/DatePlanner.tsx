@@ -1,23 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dice5, Save } from "lucide-react";
+import { Dice5 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GameLayout from "@/components/games/GameLayout";
 import { datePlannerActivities, datePlannerPlaces } from "@/lib/gameQuestions";
-import { useCouple } from "@/hooks/useCouple";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const DatePlanner = () => {
-  const { coupleId, userId } = useCouple();
   const [activity, setActivity] = useState<string | null>(null);
   const [place, setPlace] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   const spin = () => {
     setSpinning(true);
-    setSaved(false);
     let count = 0;
     const interval = setInterval(() => {
       setActivity(datePlannerActivities[Math.floor(Math.random() * datePlannerActivities.length)]);
@@ -28,24 +22,6 @@ const DatePlanner = () => {
         setSpinning(false);
       }
     }, 100);
-  };
-
-  const handleSave = async () => {
-    if (!activity || !place || !coupleId || !userId) return;
-
-    const { error } = await supabase.from("date_planner_results").insert({
-      couple_id: coupleId,
-      activity,
-      place,
-      created_by: userId,
-    });
-
-    if (error) {
-      toast.error("Gagal menyimpan");
-    } else {
-      toast.success("Ide kencan disimpan! 💕");
-      setSaved(true);
-    }
   };
 
   return (
@@ -95,20 +71,6 @@ const DatePlanner = () => {
                   </motion.p>
                 </div>
               </div>
-
-              {!spinning && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                  <Button
-                    variant="outline"
-                    onClick={handleSave}
-                    className="w-full gap-2"
-                    disabled={saved || !coupleId}
-                  >
-                    <Save className="w-4 h-4" />
-                    {saved ? "Tersimpan! ✓" : "Simpan Ide Kencan"}
-                  </Button>
-                </motion.div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>

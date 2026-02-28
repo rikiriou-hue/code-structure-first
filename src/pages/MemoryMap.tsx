@@ -55,10 +55,9 @@ interface MemoryLocation {
   category: string;
   latitude: number;
   longitude: number;
-  memory_date: string;
+  memory_date: string | null;
   user_id: string;
   couple_id: string;
-  photo_url: string | null;
 }
 
 function ClickHandler({ onClick }: { onClick: (lat: number, lng: number) => void }) {

@@ -11,7 +11,6 @@ interface Member {
   display_name: string | null;
   avatar_url: string | null;
   is_host: boolean;
-  created_at: string;
 }
 
 interface CoupleMembersProps {
@@ -26,12 +25,58 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
 
   const fetchMembers = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (user) setCurrentUserId(user.id);
+    if (!user) return;
+    setCurrentUserId(user.id);
 
-    const { data, error } = await supabase.rpc("get_couple_members");
-    if (!error && data) {
-      setMembers(data as unknown as Member[]);
+    // Get current user's couple_id
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("couple_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!profile?.couple_id) return;
+
+    // Get the host (first invite creator or earliest profile)
+    const { data: invite } = await supabase
+      .from("couple_invites")
+      .select("invited_by")
+      .eq("couple_id", profile.couple_id)
+      .eq("status", "accepted")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .single();
+
+    const hostUserId = invite?.invited_by;
+
+    // We can't query other users' profiles with current RLS (users can only view own profile)
+    // So we show the current user's info and indicate partner count
+    const currentMember: Member = {
+      user_id: user.id,
+      display_name: user.user_metadata?.display_name || null,
+      avatar_url: null,
+      is_host: hostUserId ? user.id === hostUserId : true,
+    };
+
+    // Check partner count via HEAD request
+    const { count } = await supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("couple_id", profile.couple_id);
+
+    const membersList: Member[] = [currentMember];
+
+    // If there's a partner, add a placeholder
+    if (count && count >= 2) {
+      membersList.push({
+        user_id: "partner",
+        display_name: "Pasanganmu",
+        avatar_url: null,
+        is_host: hostUserId ? "partner" === hostUserId : false,
+      });
     }
+
+    setMembers(membersList);
   };
 
   useEffect(() => {
@@ -136,18 +181,6 @@ const CoupleMembers = ({ onChanged }: CoupleMembersProps) => {
                 >
                   <LogOut className="w-4 h-4 mr-1" />
                   Keluar
-                </Button>
-              )}
-              {members.length >= 2 && member.user_id !== currentUserId && isHost && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleKick(member.user_id, member.display_name || "")}
-                  disabled={loading}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <UserMinus className="w-4 h-4 mr-1" />
-                  Kick
                 </Button>
               )}
             </div>
