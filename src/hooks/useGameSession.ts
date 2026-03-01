@@ -11,6 +11,8 @@ export function useGameSession(gameType: string) {
   const [optionB, setOptionB] = useState<string | null>(null);
   const [myAnswer, setMyAnswer] = useState<string | null>(null);
   const [partnerAnswer, setPartnerAnswer] = useState<string | null>(null);
+  const [answererId, setAnswererId] = useState<string | null>(null);
+  const [guesserId, setGuesserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const sessionIdRef = useRef<string | null>(null);
 
