@@ -1,12 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import GameLayout from "@/components/games/GameLayout";
+import GameScoreBadge from "@/components/games/GameScoreBadge";
 import { truthOrLoveQuestions } from "@/lib/gameQuestions";
 import { useGameSession } from "@/hooks/useGameSession";
-import { useState } from "react";
+import { useGameScores } from "@/hooks/useGameScores";
 
 const TruthOrLove = () => {
   const {
@@ -15,9 +16,9 @@ const TruthOrLove = () => {
     loading, createSession, submitAnswer,
   } = useGameSession("truth_or_love");
 
+  const { addScore } = useGameScores("truth_or_love");
   const [draft, setDraft] = useState("");
 
-  // Auto-create session if none exists
   useEffect(() => {
     if (!loading && coupleId && !sessionId) {
       const q = truthOrLoveQuestions[Math.floor(Math.random() * truthOrLoveQuestions.length)];
@@ -34,6 +35,8 @@ const TruthOrLove = () => {
   const handleSubmit = async () => {
     if (!draft.trim()) return;
     await submitAnswer(draft.trim());
+    // Both answered = draw (participation point)
+    addScore("truth_or_love", "draw");
   };
 
   if (loading || !question) {
@@ -46,13 +49,15 @@ const TruthOrLove = () => {
 
   return (
     <GameLayout title="Truth or Love" emoji="💕">
+      <GameScoreBadge gameType="truth_or_love" />
+
       <AnimatePresence mode="wait">
         <motion.div
           key={sessionId}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="space-y-6"
+          className="space-y-6 mt-4"
         >
           <div className="scrapbook-card p-8 text-center">
             <p className="font-handwritten text-3xl text-foreground leading-relaxed">
