@@ -39,6 +39,8 @@ export function useGameSession(gameType: string) {
         setQuestion(data.question);
         setOptionA(data.option_a);
         setOptionB(data.option_b);
+        setAnswererId((data as any).answerer_id);
+        setGuesserId((data as any).guesser_id);
 
         const { data: answers } = await supabase
           .from("game_answers")
