@@ -11,6 +11,8 @@ export function useGameSession(gameType: string) {
   const [optionB, setOptionB] = useState<string | null>(null);
   const [myAnswer, setMyAnswer] = useState<string | null>(null);
   const [partnerAnswer, setPartnerAnswer] = useState<string | null>(null);
+  const [answererId, setAnswererId] = useState<string | null>(null);
+  const [guesserId, setGuesserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const sessionIdRef = useRef<string | null>(null);
 
@@ -37,6 +39,8 @@ export function useGameSession(gameType: string) {
         setQuestion(data.question);
         setOptionA(data.option_a);
         setOptionB(data.option_b);
+        setAnswererId((data as any).answerer_id);
+        setGuesserId((data as any).guesser_id);
 
         const { data: answers } = await supabase
           .from("game_answers")
@@ -72,6 +76,8 @@ export function useGameSession(gameType: string) {
           setQuestion(s.question);
           setOptionA(s.option_a);
           setOptionB(s.option_b);
+          setAnswererId(s.answerer_id);
+          setGuesserId(s.guesser_id);
           setMyAnswer(null);
           setPartnerAnswer(null);
         }
@@ -110,7 +116,7 @@ export function useGameSession(gameType: string) {
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);
 
-  const createSession = useCallback(async (q: string, optA?: string, optB?: string) => {
+  const createSession = useCallback(async (q: string, optA?: string, optB?: string, roles?: { answerer_id: string; guesser_id: string }) => {
     if (!coupleId || !userId) return null;
 
     // Mark old active sessions as done
@@ -121,16 +127,22 @@ export function useGameSession(gameType: string) {
       .eq("game_type", gameType)
       .eq("status", "active");
 
+    const insertData: any = {
+      couple_id: coupleId,
+      game_type: gameType,
+      question: q,
+      option_a: optA || null,
+      option_b: optB || null,
+      created_by: userId,
+    };
+    if (roles) {
+      insertData.answerer_id = roles.answerer_id;
+      insertData.guesser_id = roles.guesser_id;
+    }
+
     const { data: session } = await supabase
       .from("game_sessions")
-      .insert({
-        couple_id: coupleId,
-        game_type: gameType,
-        question: q,
-        option_a: optA || null,
-        option_b: optB || null,
-        created_by: userId,
-      })
+      .insert(insertData)
       .select("id")
       .single();
 
@@ -140,6 +152,8 @@ export function useGameSession(gameType: string) {
     setQuestion(q);
     setOptionA(optA || null);
     setOptionB(optB || null);
+    setAnswererId(roles?.answerer_id || null);
+    setGuesserId(roles?.guesser_id || null);
     setMyAnswer(null);
     setPartnerAnswer(null);
 
@@ -163,6 +177,7 @@ export function useGameSession(gameType: string) {
     coupleId, userId, myName, partnerName,
     sessionId, question, optionA, optionB,
     myAnswer, partnerAnswer,
+    answererId, guesserId,
     loading: loading || coupleLoading,
     createSession, submitAnswer,
   };
