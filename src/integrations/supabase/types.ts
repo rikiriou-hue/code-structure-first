@@ -192,10 +192,12 @@ export type Database = {
       }
       game_sessions: {
         Row: {
+          answerer_id: string | null
           couple_id: string
           created_at: string
           created_by: string | null
           game_type: string
+          guesser_id: string | null
           id: string
           option_a: string | null
           option_b: string | null
@@ -203,10 +205,12 @@ export type Database = {
           status: string
         }
         Insert: {
+          answerer_id?: string | null
           couple_id: string
           created_at?: string
           created_by?: string | null
           game_type: string
+          guesser_id?: string | null
           id?: string
           option_a?: string | null
           option_b?: string | null
@@ -214,10 +218,12 @@ export type Database = {
           status?: string
         }
         Update: {
+          answerer_id?: string | null
           couple_id?: string
           created_at?: string
           created_by?: string | null
           game_type?: string
+          guesser_id?: string | null
           id?: string
           option_a?: string | null
           option_b?: string | null
