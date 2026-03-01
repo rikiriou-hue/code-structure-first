@@ -76,6 +76,8 @@ export function useGameSession(gameType: string) {
           setQuestion(s.question);
           setOptionA(s.option_a);
           setOptionB(s.option_b);
+          setAnswererId(s.answerer_id);
+          setGuesserId(s.guesser_id);
           setMyAnswer(null);
           setPartnerAnswer(null);
         }
