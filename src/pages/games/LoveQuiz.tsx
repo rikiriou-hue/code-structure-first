@@ -4,8 +4,10 @@ import { RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import GameLayout from "@/components/games/GameLayout";
+import GameScoreBadge from "@/components/games/GameScoreBadge";
 import { loveQuizQuestions } from "@/lib/gameQuestions";
 import { useGameSession } from "@/hooks/useGameSession";
+import { useGameScores } from "@/hooks/useGameScores";
 
 const LoveQuiz = () => {
   const {
@@ -14,9 +16,8 @@ const LoveQuiz = () => {
     loading, createSession, submitAnswer,
   } = useGameSession("love_quiz");
 
+  const { addScore } = useGameScores("love_quiz");
   const [draft, setDraft] = useState("");
-  const [score, setScore] = useState(0);
-  const [totalAnswered, setTotalAnswered] = useState(0);
 
   useEffect(() => {
     if (!loading && coupleId && !sessionId) {
@@ -34,7 +35,11 @@ const LoveQuiz = () => {
   const handleSubmit = async () => {
     if (!draft.trim()) return;
     await submitAnswer(draft.trim());
-    setTotalAnswered((p) => p + 1);
+  };
+
+  const handleResult = (correct: boolean) => {
+    addScore("love_quiz", correct ? "win" : "loss");
+    nextQuestion();
   };
 
   if (loading || !question) {
@@ -47,11 +52,7 @@ const LoveQuiz = () => {
 
   return (
     <GameLayout title="Love Quiz" emoji="🧠">
-      <div className="text-center mb-6">
-        <span className="font-handwritten text-xl text-muted-foreground">
-          Skor: {score}/{totalAnswered}
-        </span>
-      </div>
+      <GameScoreBadge gameType="love_quiz" />
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -59,7 +60,7 @@ const LoveQuiz = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="space-y-6"
+          className="space-y-6 mt-4"
         >
           <div className="scrapbook-card p-8 text-center">
             <p className="font-handwritten text-3xl text-foreground leading-relaxed">
@@ -105,14 +106,14 @@ const LoveQuiz = () => {
                   <Button
                     variant="outline"
                     className="flex-1 gap-2 border-green-500/30 hover:bg-green-500/10 text-green-400"
-                    onClick={() => { setScore((s) => s + 1); nextQuestion(); }}
+                    onClick={() => handleResult(true)}
                   >
-                    <CheckCircle2 className="w-4 h-4" /> Benar
+                    <CheckCircle2 className="w-4 h-4" /> Benar (+3 poin)
                   </Button>
                   <Button
                     variant="outline"
                     className="flex-1 gap-2 border-destructive/30 hover:bg-destructive/10 text-destructive"
-                    onClick={nextQuestion}
+                    onClick={() => handleResult(false)}
                   >
                     <XCircle className="w-4 h-4" /> Salah
                   </Button>

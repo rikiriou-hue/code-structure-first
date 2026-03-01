@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, MessageCircleHeart, Brain, Users, Zap, Grid3X3, Dice5 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
+import Leaderboard from "@/components/games/Leaderboard";
 
 const games = [
   {
@@ -83,6 +84,11 @@ const CoupleGames = () => {
             <p className="font-handwritten text-xl text-muted-foreground">
               Mini games untuk meningkatkan kedekatan 💖
             </p>
+          </div>
+
+          {/* Leaderboard */}
+          <div className="mb-10">
+            <Leaderboard />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
