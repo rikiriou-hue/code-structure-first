@@ -177,6 +177,7 @@ export function useGameSession(gameType: string) {
     coupleId, userId, myName, partnerName,
     sessionId, question, optionA, optionB,
     myAnswer, partnerAnswer,
+    answererId, guesserId,
     loading: loading || coupleLoading,
     createSession, submitAnswer,
   };
