@@ -146,6 +146,50 @@ export type Database = {
           },
         ]
       }
+      game_scores: {
+        Row: {
+          couple_id: string
+          draws: number
+          game_type: string
+          id: string
+          losses: number
+          total_points: number
+          updated_at: string
+          user_id: string
+          wins: number
+        }
+        Insert: {
+          couple_id: string
+          draws?: number
+          game_type: string
+          id?: string
+          losses?: number
+          total_points?: number
+          updated_at?: string
+          user_id: string
+          wins?: number
+        }
+        Update: {
+          couple_id?: string
+          draws?: number
+          game_type?: string
+          id?: string
+          losses?: number
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+          wins?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_scores_couple_id_fkey"
+            columns: ["couple_id"]
+            isOneToOne: false
+            referencedRelation: "couples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_sessions: {
         Row: {
           couple_id: string
