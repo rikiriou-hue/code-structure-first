@@ -116,7 +116,7 @@ export function useGameSession(gameType: string) {
     return () => { supabase.removeChannel(channel); };
   }, [sessionId, userId]);
 
-  const createSession = useCallback(async (q: string, optA?: string, optB?: string) => {
+  const createSession = useCallback(async (q: string, optA?: string, optB?: string, roles?: { answerer_id: string; guesser_id: string }) => {
     if (!coupleId || !userId) return null;
 
     // Mark old active sessions as done
@@ -127,16 +127,22 @@ export function useGameSession(gameType: string) {
       .eq("game_type", gameType)
       .eq("status", "active");
 
+    const insertData: any = {
+      couple_id: coupleId,
+      game_type: gameType,
+      question: q,
+      option_a: optA || null,
+      option_b: optB || null,
+      created_by: userId,
+    };
+    if (roles) {
+      insertData.answerer_id = roles.answerer_id;
+      insertData.guesser_id = roles.guesser_id;
+    }
+
     const { data: session } = await supabase
       .from("game_sessions")
-      .insert({
-        couple_id: coupleId,
-        game_type: gameType,
-        question: q,
-        option_a: optA || null,
-        option_b: optB || null,
-        created_by: userId,
-      })
+      .insert(insertData)
       .select("id")
       .single();
 
@@ -146,6 +152,8 @@ export function useGameSession(gameType: string) {
     setQuestion(q);
     setOptionA(optA || null);
     setOptionB(optB || null);
+    setAnswererId(roles?.answerer_id || null);
+    setGuesserId(roles?.guesser_id || null);
     setMyAnswer(null);
     setPartnerAnswer(null);
 
