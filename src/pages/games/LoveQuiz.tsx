@@ -4,10 +4,8 @@ import { RefreshCw, CheckCircle2, XCircle, User, HelpCircle } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import GameLayout from "@/components/games/GameLayout";
-import GameScoreBadge from "@/components/games/GameScoreBadge";
 import { loveQuizQuestions } from "@/lib/gameQuestions";
 import { useGameSession } from "@/hooks/useGameSession";
-import { useGameScores } from "@/hooks/useGameScores";
 import { supabase } from "@/integrations/supabase/client";
 
 const LoveQuiz = () => {
@@ -18,19 +16,15 @@ const LoveQuiz = () => {
     loading, createSession, submitAnswer,
   } = useGameSession("love_quiz");
 
-  const { addScore } = useGameScores("love_quiz");
   const [draft, setDraft] = useState("");
   const [lastRole, setLastRole] = useState<"answerer" | "guesser" | null>(null);
-  const scoredRef = useRef<string | null>(null);
 
-  // Track last role to alternate
   useEffect(() => {
     if (answererId && userId) {
       setLastRole(answererId === userId ? "answerer" : "guesser");
     }
   }, [answererId, userId]);
 
-  // Fetch partner user id for role assignment
   const getPartnerId = async (): Promise<string | null> => {
     if (!coupleId || !userId) return null;
     const { data } = await supabase
@@ -45,23 +39,19 @@ const LoveQuiz = () => {
   const startNewRound = async () => {
     const q = loveQuizQuestions[Math.floor(Math.random() * loveQuizQuestions.length)];
     setDraft("");
-    scoredRef.current = null;
 
     const partnerId = await getPartnerId();
     if (!partnerId || !userId) {
-      // Solo mode — no roles
       createSession(q);
       return;
     }
 
-    // Alternate roles: if last time I was answerer, now I'm guesser
     let newAnswerer: string;
     let newGuesser: string;
     if (lastRole === "answerer") {
       newAnswerer = partnerId;
       newGuesser = userId;
     } else {
-      // Default or was guesser last time → now answerer
       newAnswerer = userId;
       newGuesser = partnerId;
     }
@@ -80,13 +70,6 @@ const LoveQuiz = () => {
     await submitAnswer(draft.trim());
   };
 
-  const handleResult = (correct: boolean) => {
-    if (scoredRef.current === sessionId) return;
-    scoredRef.current = sessionId;
-    addScore("love_quiz", correct ? "win" : "loss");
-    startNewRound();
-  };
-
   const isAnswerer = answererId === userId;
   const isGuesser = guesserId === userId;
   const hasRoles = !!answererId && !!guesserId;
@@ -101,8 +84,6 @@ const LoveQuiz = () => {
 
   return (
     <GameLayout title="Love Quiz" emoji="🧠">
-      <GameScoreBadge gameType="love_quiz" />
-
       <AnimatePresence mode="wait">
         <motion.div
           key={sessionId}
@@ -111,7 +92,6 @@ const LoveQuiz = () => {
           exit={{ opacity: 0, y: -20 }}
           className="space-y-6 mt-4"
         >
-          {/* Role indicator */}
           {hasRoles && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -183,31 +163,17 @@ const LoveQuiz = () => {
                 )}
               </div>
 
-              {/* Only the guesser decides if their guess was correct */}
-              {partnerAnswer && isGuesser && (
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1 gap-2 border-green-500/30 hover:bg-green-500/10 text-green-400"
-                    onClick={() => handleResult(true)}
-                  >
-                    <CheckCircle2 className="w-4 h-4" /> Benar (+3 poin)
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1 gap-2 border-destructive/30 hover:bg-destructive/10 text-destructive"
-                    onClick={() => handleResult(false)}
-                  >
-                    <XCircle className="w-4 h-4" /> Salah
-                  </Button>
-                </div>
-              )}
-
-              {/* Answerer waits for guesser to judge */}
-              {partnerAnswer && isAnswerer && (
-                <p className="text-center text-sm text-muted-foreground italic">
-                  Menunggu {partnerName} menilai tebakannya... ⏳
-                </p>
+              {/* Both answered - show comparison */}
+              {partnerAnswer && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-2"
+                >
+                  <p className="font-handwritten text-lg text-muted-foreground">
+                    Bandingkan jawaban kalian! Apakah tebakannya tepat? 🤔
+                  </p>
+                </motion.div>
               )}
             </motion.div>
           )}
