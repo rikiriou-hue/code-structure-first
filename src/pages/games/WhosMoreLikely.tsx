@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GameLayout from "@/components/games/GameLayout";
-import GameScoreBadge from "@/components/games/GameScoreBadge";
 import { whosMoreLikelyQuestions } from "@/lib/gameQuestions";
 import { useGameSession } from "@/hooks/useGameSession";
-import { useGameScores } from "@/hooks/useGameScores";
 
 const WhosMoreLikely = () => {
   const {
@@ -14,8 +12,6 @@ const WhosMoreLikely = () => {
     sessionId, question, myAnswer, partnerAnswer,
     loading, createSession, submitAnswer,
   } = useGameSession("whos_more_likely");
-
-  const { addScore } = useGameScores("whos_more_likely");
 
   useEffect(() => {
     if (!loading && coupleId && !sessionId) {
@@ -34,17 +30,6 @@ const WhosMoreLikely = () => {
     await submitAnswer(choice);
   };
 
-  // Score when both have answered
-  useEffect(() => {
-    if (myAnswer && partnerAnswer) {
-      if (myAnswer === partnerAnswer) {
-        addScore("whos_more_likely", "win");
-      } else {
-        addScore("whos_more_likely", "draw");
-      }
-    }
-  }, [myAnswer, partnerAnswer]);
-
   if (loading || !question) {
     return (
       <GameLayout title="Who's More Likely" emoji="🤭">
@@ -55,8 +40,6 @@ const WhosMoreLikely = () => {
 
   return (
     <GameLayout title="Who's More Likely" emoji="🤭">
-      <GameScoreBadge gameType="whos_more_likely" />
-
       <AnimatePresence mode="wait">
         <motion.div
           key={sessionId}
@@ -101,7 +84,7 @@ const WhosMoreLikely = () => {
               {partnerAnswer ? (
                 <p className="font-handwritten text-lg text-foreground mt-2">
                   {partnerName} memilih: <span className="text-primary">{partnerAnswer}</span>
-                  {myAnswer === partnerAnswer ? " ✨ Sama! (+3 poin)" : " 😄 Berbeda! (+1 poin)"}
+                  {myAnswer === partnerAnswer ? " 💕 Sama!" : " 😄 Berbeda!"}
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground mt-2 italic">

@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Heart, LogOut, Menu, X } from "lucide-react";
+import { Heart, LogOut, Menu, X, Sun, Moon } from "lucide-react";
 import CoupleMembers from "@/components/CoupleMembers";
 import NotificationBell from "@/components/NotificationBell";
+import { useTheme } from "@/components/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -12,6 +13,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { mode, toggleMode } = useTheme();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -53,6 +55,13 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            <button
+              onClick={toggleMode}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+              title={mode === "dark" ? "Light mode" : "Dark mode"}
+            >
+              {mode === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <NotificationBell />
             <CoupleMembers />
             <button
@@ -65,14 +74,24 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Mobile hamburger */}
+        {/* Mobile: notification + theme toggle + hamburger */}
         {isMobile && (
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleMode}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+              title={mode === "dark" ? "Light mode" : "Dark mode"}
+            >
+              {mode === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <NotificationBell />
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         )}
       </div>
 

@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GameLayout from "@/components/games/GameLayout";
-import GameScoreBadge from "@/components/games/GameScoreBadge";
 import { thisOrThatQuestions } from "@/lib/gameQuestions";
 import { useGameSession } from "@/hooks/useGameSession";
-import { useGameScores } from "@/hooks/useGameScores";
 
 const ThisOrThat = () => {
   const {
@@ -15,8 +13,6 @@ const ThisOrThat = () => {
     myAnswer, partnerAnswer,
     loading, createSession, submitAnswer,
   } = useGameSession("this_or_that");
-
-  const { addScore } = useGameScores("this_or_that");
 
   useEffect(() => {
     if (!loading && coupleId && !sessionId) {
@@ -35,17 +31,6 @@ const ThisOrThat = () => {
     await submitAnswer(choice);
   };
 
-  // Score when both answered
-  useEffect(() => {
-    if (myAnswer && partnerAnswer) {
-      if (myAnswer === partnerAnswer) {
-        addScore("this_or_that", "win");
-      } else {
-        addScore("this_or_that", "draw");
-      }
-    }
-  }, [myAnswer, partnerAnswer]);
-
   if (loading || !optionA || !optionB) {
     return (
       <GameLayout title="This or That" emoji="⚡">
@@ -56,8 +41,6 @@ const ThisOrThat = () => {
 
   return (
     <GameLayout title="This or That" emoji="⚡">
-      <GameScoreBadge gameType="this_or_that" />
-
       <AnimatePresence mode="wait">
         <motion.div
           key={sessionId}
@@ -96,7 +79,7 @@ const ThisOrThat = () => {
               {partnerAnswer ? (
                 <p className="font-handwritten text-lg text-foreground mt-2">
                   {partnerName} memilih: <span className="text-primary">{partnerAnswer}</span>
-                  {myAnswer === partnerAnswer ? " 💕 Cocok! (+3 poin)" : " 😄 Berbeda! (+1 poin)"}
+                  {myAnswer === partnerAnswer ? " 💕 Cocok!" : " 😄 Berbeda!"}
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground mt-2 italic">
