@@ -158,7 +158,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-    {/* </ThemeProvider> */}
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

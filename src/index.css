@@ -7,7 +7,7 @@
 @layer base {
   /* ===== DARK MODE (default) ===== */
   :root,
-  .theme-romantic-rose.mode-dark {
+  .dark {
     --background: 340 15% 6%;
     --foreground: 30 20% 88%;
 
@@ -63,7 +63,7 @@
   }
 
   /* ===== LIGHT MODE ===== */
-  .theme-romantic-rose.mode-light {
+  .light {
     --background: 340 20% 97%;
     --foreground: 340 15% 15%;
 
@@ -115,330 +115,6 @@
     --paper-dark: 340 10% 90%;
     --ink: 340 15% 20%;
   }
-
-  /* ===== NATURE MEMORY DARK ===== */
-  .theme-nature-memory,
-  .theme-nature-memory.mode-dark {
-    --background: 90 12% 6%;
-    --foreground: 60 15% 85%;
-
-    --card: 90 10% 10%;
-    --card-foreground: 60 15% 85%;
-
-    --popover: 90 10% 10%;
-    --popover-foreground: 60 15% 85%;
-
-    --primary: 120 30% 40%;
-    --primary-foreground: 60 20% 95%;
-
-    --secondary: 90 8% 15%;
-    --secondary-foreground: 60 12% 75%;
-
-    --muted: 90 8% 15%;
-    --muted-foreground: 90 6% 48%;
-
-    --accent: 120 30% 40%;
-    --accent-foreground: 60 20% 95%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 90 8% 18%;
-    --input: 90 8% 18%;
-    --ring: 120 30% 40%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 90 12% 6%;
-    --sidebar-foreground: 60 15% 85%;
-    --sidebar-primary: 120 30% 40%;
-    --sidebar-primary-foreground: 60 20% 95%;
-    --sidebar-accent: 90 8% 15%;
-    --sidebar-accent-foreground: 60 15% 85%;
-    --sidebar-border: 90 8% 18%;
-    --sidebar-ring: 120 30% 40%;
-
-    --rose: 120 30% 40%;
-    --rose-soft: 120 25% 55%;
-    --rose-glow: 120 30% 40% / 0.15;
-    --glass: 90 10% 10% / 0.6;
-    --glass-border: 0 0% 100% / 0.08;
-    --glass-hover: 0 0% 100% / 0.05;
-
-    --tape: 60 50% 55%;
-    --paper: 60 25% 90%;
-    --paper-dark: 90 10% 12%;
-    --ink: 90 12% 20%;
-  }
-
-  .theme-nature-memory.mode-light {
-    --background: 90 18% 96%;
-    --foreground: 90 12% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 90 12% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 90 12% 15%;
-
-    --primary: 120 35% 38%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 90 12% 92%;
-    --secondary-foreground: 90 8% 35%;
-
-    --muted: 90 10% 91%;
-    --muted-foreground: 90 6% 45%;
-
-    --accent: 120 35% 38%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 90 10% 87%;
-    --input: 90 10% 87%;
-    --ring: 120 35% 38%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 90 18% 96%;
-    --sidebar-foreground: 90 12% 15%;
-    --sidebar-primary: 120 35% 38%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 90 12% 92%;
-    --sidebar-accent-foreground: 90 12% 15%;
-    --sidebar-border: 90 10% 87%;
-    --sidebar-ring: 120 35% 38%;
-
-    --rose: 120 35% 38%;
-    --rose-soft: 120 25% 48%;
-    --rose-glow: 120 35% 38% / 0.12;
-    --glass: 0 0% 100% / 0.7;
-    --glass-border: 90 12% 15% / 0.08;
-    --glass-hover: 90 12% 15% / 0.04;
-
-    --tape: 60 50% 55%;
-    --paper: 60 25% 90%;
-    --paper-dark: 90 10% 90%;
-    --ink: 90 12% 20%;
-  }
-
-  /* ===== OCEAN DREAM DARK ===== */
-  .theme-ocean-dream,
-  .theme-ocean-dream.mode-dark {
-    --background: 210 20% 7%;
-    --foreground: 210 15% 88%;
-
-    --card: 210 16% 11%;
-    --card-foreground: 210 15% 88%;
-
-    --popover: 210 16% 11%;
-    --popover-foreground: 210 15% 88%;
-
-    --primary: 190 60% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 12% 16%;
-    --secondary-foreground: 210 10% 75%;
-
-    --muted: 210 12% 16%;
-    --muted-foreground: 210 8% 48%;
-
-    --accent: 190 60% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 12% 20%;
-    --input: 210 12% 20%;
-    --ring: 190 60% 45%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 210 20% 7%;
-    --sidebar-foreground: 210 15% 88%;
-    --sidebar-primary: 190 60% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 12% 16%;
-    --sidebar-accent-foreground: 210 15% 88%;
-    --sidebar-border: 210 12% 20%;
-    --sidebar-ring: 190 60% 45%;
-
-    --rose: 190 60% 45%;
-    --rose-soft: 190 45% 60%;
-    --rose-glow: 190 60% 45% / 0.15;
-    --glass: 210 16% 11% / 0.6;
-    --glass-border: 0 0% 100% / 0.08;
-    --glass-hover: 0 0% 100% / 0.05;
-
-    --tape: 190 40% 55%;
-    --paper: 210 20% 90%;
-    --paper-dark: 210 16% 12%;
-    --ink: 210 20% 20%;
-  }
-
-  .theme-ocean-dream.mode-light {
-    --background: 210 25% 97%;
-    --foreground: 210 20% 12%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 210 20% 12%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 12%;
-
-    --primary: 190 65% 40%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 15% 93%;
-    --secondary-foreground: 210 10% 35%;
-
-    --muted: 210 12% 91%;
-    --muted-foreground: 210 8% 45%;
-
-    --accent: 190 65% 40%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 14% 88%;
-    --input: 210 14% 88%;
-    --ring: 190 65% 40%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 210 25% 97%;
-    --sidebar-foreground: 210 20% 12%;
-    --sidebar-primary: 190 65% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 15% 93%;
-    --sidebar-accent-foreground: 210 20% 12%;
-    --sidebar-border: 210 14% 88%;
-    --sidebar-ring: 190 65% 40%;
-
-    --rose: 190 65% 40%;
-    --rose-soft: 190 45% 50%;
-    --rose-glow: 190 65% 40% / 0.12;
-    --glass: 0 0% 100% / 0.7;
-    --glass-border: 210 20% 12% / 0.08;
-    --glass-hover: 210 20% 12% / 0.04;
-
-    --tape: 190 40% 55%;
-    --paper: 210 20% 90%;
-    --paper-dark: 210 14% 90%;
-    --ink: 210 20% 20%;
-  }
-
-  /* ===== MIDNIGHT VINTAGE DARK ===== */
-  .theme-midnight-vintage,
-  .theme-midnight-vintage.mode-dark {
-    --background: 30 8% 4%;
-    --foreground: 40 30% 85%;
-
-    --card: 30 6% 9%;
-    --card-foreground: 40 30% 85%;
-
-    --popover: 30 6% 9%;
-    --popover-foreground: 40 30% 85%;
-
-    --primary: 42 70% 50%;
-    --primary-foreground: 30 10% 8%;
-
-    --secondary: 30 5% 14%;
-    --secondary-foreground: 40 20% 70%;
-
-    --muted: 30 5% 14%;
-    --muted-foreground: 30 6% 45%;
-
-    --accent: 42 70% 50%;
-    --accent-foreground: 30 10% 8%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 30 6% 18%;
-    --input: 30 6% 18%;
-    --ring: 42 70% 50%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 30 8% 4%;
-    --sidebar-foreground: 40 30% 85%;
-    --sidebar-primary: 42 70% 50%;
-    --sidebar-primary-foreground: 30 10% 8%;
-    --sidebar-accent: 30 5% 14%;
-    --sidebar-accent-foreground: 40 30% 85%;
-    --sidebar-border: 30 6% 18%;
-    --sidebar-ring: 42 70% 50%;
-
-    --rose: 42 70% 50%;
-    --rose-soft: 42 55% 60%;
-    --rose-glow: 42 70% 50% / 0.15;
-    --glass: 30 6% 9% / 0.6;
-    --glass-border: 40 30% 80% / 0.08;
-    --glass-hover: 40 30% 80% / 0.05;
-
-    --tape: 42 50% 50%;
-    --paper: 40 25% 88%;
-    --paper-dark: 30 6% 12%;
-    --ink: 30 8% 20%;
-  }
-
-  .theme-midnight-vintage.mode-light {
-    --background: 40 25% 96%;
-    --foreground: 30 10% 12%;
-
-    --card: 40 20% 99%;
-    --card-foreground: 30 10% 12%;
-
-    --popover: 40 20% 99%;
-    --popover-foreground: 30 10% 12%;
-
-    --primary: 42 75% 45%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 40 15% 92%;
-    --secondary-foreground: 30 8% 35%;
-
-    --muted: 40 12% 90%;
-    --muted-foreground: 30 6% 45%;
-
-    --accent: 42 75% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 40 12% 87%;
-    --input: 40 12% 87%;
-    --ring: 42 75% 45%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 40 25% 96%;
-    --sidebar-foreground: 30 10% 12%;
-    --sidebar-primary: 42 75% 45%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 15% 92%;
-    --sidebar-accent-foreground: 30 10% 12%;
-    --sidebar-border: 40 12% 87%;
-    --sidebar-ring: 42 75% 45%;
-
-    --rose: 42 75% 45%;
-    --rose-soft: 42 55% 55%;
-    --rose-glow: 42 75% 45% / 0.12;
-    --glass: 40 20% 99% / 0.7;
-    --glass-border: 30 10% 12% / 0.08;
-    --glass-hover: 30 10% 12% / 0.04;
-
-    --tape: 42 50% 50%;
-    --paper: 40 25% 88%;
-    --paper-dark: 40 12% 90%;
-    --ink: 30 8% 20%;
-  }
 }
 
 @layer base {
@@ -472,7 +148,7 @@
     @apply bg-card/60 backdrop-blur-xl border border-white/[0.08] rounded-2xl;
   }
 
-  .mode-light .glass-card {
+  .light .glass-card {
     @apply border-black/[0.06];
   }
 
@@ -480,7 +156,7 @@
     @apply glass-card transition-all duration-500 hover:border-white/[0.15] hover:shadow-[0_0_30px_hsl(var(--rose-glow))];
   }
 
-  .mode-light .glass-card-hover {
+  .light .glass-card-hover {
     @apply hover:border-black/[0.1];
   }
 
@@ -500,7 +176,7 @@
       -1px -1px 4px hsl(0 0% 100% / 0.02);
   }
 
-  .mode-light .scrapbook-card {
+  .light .scrapbook-card {
     @apply border-black/[0.06];
     box-shadow: 
       4px 4px 12px hsl(0 0% 0% / 0.08),
@@ -521,7 +197,7 @@
     box-shadow: 2px 2px 8px hsl(0 0% 0% / 0.5);
   }
 
-  .mode-light .scrapbook-photo {
+  .light .scrapbook-photo {
     box-shadow: 2px 2px 8px hsl(0 0% 0% / 0.1);
   }
 
