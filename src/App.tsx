@@ -158,6 +158,11 @@ const App = () => (
             }
           />
 
+          <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+          <Route path="/ai-love-letter" element={<ProtectedRoute><AILoveLetter /></ProtectedRoute>} />
+          <Route path="/photobooth" element={<ProtectedRoute><Photobooth /></ProtectedRoute>} />
+          <Route path="/custom-themes" element={<ProtectedRoute><CustomThemes /></ProtectedRoute>} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
