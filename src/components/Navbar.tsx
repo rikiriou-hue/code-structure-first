@@ -28,6 +28,8 @@ const Navbar = () => {
     { to: "/future-letters", label: "Letters" },
     { to: "/memory-map", label: "Map" },
     { to: "/couple-games", label: "Games" },
+    { to: "/ai-love-letter", label: "💌 AI Letter" },
+    { to: "/photobooth", label: "📸 Booth" },
     { to: "/profile", label: "Profil" },
   ];
 
