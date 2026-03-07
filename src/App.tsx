@@ -23,6 +23,10 @@ import MemoryMatch from "./pages/games/MemoryMatch";
 import DatePlanner from "./pages/games/DatePlanner";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Pricing from "./pages/Pricing";
+import AILoveLetter from "./pages/AILoveLetter";
+import Photobooth from "./pages/Photobooth";
+import CustomThemes from "./pages/CustomThemes";
 
 const queryClient = new QueryClient();
 
