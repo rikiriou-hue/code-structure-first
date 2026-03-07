@@ -22,9 +22,13 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoading(false); return; }
+
       const { data } = await supabase
         .from("profiles")
         .select("display_name, avatar_url")
+        .eq("user_id", user.id)
         .single();
 
       if (data) {

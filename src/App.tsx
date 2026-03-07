@@ -23,6 +23,10 @@ import MemoryMatch from "./pages/games/MemoryMatch";
 import DatePlanner from "./pages/games/DatePlanner";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Pricing from "./pages/Pricing";
+import AILoveLetter from "./pages/AILoveLetter";
+import Photobooth from "./pages/Photobooth";
+import CustomThemes from "./pages/CustomThemes";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +157,11 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+
+          <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+          <Route path="/ai-love-letter" element={<ProtectedRoute><AILoveLetter /></ProtectedRoute>} />
+          <Route path="/photobooth" element={<ProtectedRoute><Photobooth /></ProtectedRoute>} />
+          <Route path="/custom-themes" element={<ProtectedRoute><CustomThemes /></ProtectedRoute>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
